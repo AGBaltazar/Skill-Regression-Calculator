@@ -21,17 +21,24 @@ Track skills over time and predict regression using a half-life decay model. Thi
 
 ## Flow
 - User (HTML Form)
-   ↓
+
+  ↓
 - JavaScript (Captures Data)
+
    ↓
 - HTTP Request (JSON Payload)
+
    ↓
 - Go Backend API
+
    ↓
 - API Calls (Recomendations)
+
    ↓
 - HTTP Response (JSON Result)
+
    ↓
 - JavaScript (Handles Response)
+
    ↓
 - Updated DOM (Results Displayed)

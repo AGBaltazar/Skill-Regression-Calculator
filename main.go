@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"math"
 	"net/http"
-	"time"
+	"os"
 	"strconv"
+	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type Skill struct {
@@ -18,10 +21,19 @@ type Skill struct {
 type Response struct{
 	RegressorScore int `json:"regressorscore"`
 	Interpretation string `json:"interpretation"`
+	YoutubeQuery []string `json:"youtubelinks"`
+}
+type YoutubeSearchResult struct {
+	Items []struct {
+		ID struct {
+			VideoID string `json:"videoId"`
+		} `json:"id"`
+	} `json:"items"`
 }
 
 
 func handleData(w http.ResponseWriter, r *http.Request){
+	apiKey := os.Getenv("API_KEY")
 	if r.Method == "POST"{
 
 		decoder := json.NewDecoder(r.Body)
@@ -41,43 +53,72 @@ func handleData(w http.ResponseWriter, r *http.Request){
 			return
 		}
 
-		//Now that we have the regressor score, we will be sending it back to our front end along with a interpretatino
-		if regressorScore >= 8 {
+		//Now that we have the regressor score, we will be sending it back to our front end along with a interpretation and recommendations
+		if regressorScore >= 7 {
+			YoutubeURL:= "?q=" + skillStruct.Name + "+advanced+concepts&key=" + apiKey
+			youtubeResponse, err := callYoutube(YoutubeURL)
+			if err != nil{
+				fmt.Printf("Error calling YouTube: %s ", err)
+			}
+
 			response := Response{
 				RegressorScore: regressorScore,
 				Interpretation: "Fresh",
+				YoutubeQuery: youtubeResponse,
 			}
+			fmt.Printf("Youtube response List: %v", youtubeResponse)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(response)
 
 		} else if regressorScore >= 4 && regressorScore <=6 {
+			YoutubeURL :="?q=" + skillStruct.Name + "+intermediate&key=" + apiKey
+			youtubeResponse, err := callYoutube(YoutubeURL)
+			if err != nil{
+				fmt.Printf("Error calling YouTube: %s ", err)
+			}
+
 			response := Response{
 				RegressorScore: regressorScore,
 				Interpretation: "Rusty",
+				YoutubeQuery: youtubeResponse,
 			}
+			fmt.Printf("Youtube response List: %v", youtubeResponse)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(response)
 
 		} else if regressorScore >= 1 && regressorScore <= 3{
+			YoutubeURL:= "?q=" + skillStruct.Name + "+basics&key=" + apiKey
+			youtubeResponse, err := callYoutube(YoutubeURL)
+			if err != nil{
+				fmt.Printf("Error calling YouTube: %s ", err)
+			}
 
 			response := Response{
 				RegressorScore: regressorScore,
 				Interpretation: "Weak",
+				YoutubeQuery: youtubeResponse,
 			}
+			fmt.Printf("Youtube response List: %v", youtubeResponse)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(response)
 
 		} else{
+
+			YoutubeURL:= "?q=" + skillStruct.Name + "+for+beginners&key=" + apiKey
+			youtubeResponse, err := callYoutube(YoutubeURL)
+			if err != nil{
+				fmt.Printf("Error calling YouTube: %s ", err)
+			}
+
 			responseStruct := Response{
 				RegressorScore: regressorScore,
 				Interpretation: "Forgotten",
+				YoutubeQuery: youtubeResponse,
 			}
+			fmt.Printf("Youtube response List: %v", youtubeResponse)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(responseStruct)
 		}
-		
-
-		w.WriteHeader(200)
 
 	} else{
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -105,18 +146,59 @@ func regressorCalculator(s Skill) (int, error){
 	baseScoreConstant := float64(10)
 	decayRateConstant := 0.002
 
-	fmt.Printf("Skill day %v\n", skillDays)
 	retention := (baseScoreConstant * math.Exp(-decayRateConstant * skillDays * float64(skillComplexity)))
 
 	return int(retention), nil
 }
 
+///Function takes in the URL ready with parameters aand will rcall to Youtube to get the links of the recommended videos
+func callYoutube(queryURL string) (youtubeResponse []string, err error){
+	
+	apiLink := "https://www.googleapis.com/youtube/v3/search" + queryURL
+	response, err := http.Get(apiLink)
+	if err != nil{
+		fmt.Printf("Error fetching YouTube content: %s", err)
+		emptySlice := make([]string, 3)
+		return emptySlice, err
+	}
+
+	decoder := json.NewDecoder(response.Body)
+	responseStruct := YoutubeSearchResult{}
+	err = decoder.Decode(&responseStruct)
+	if err != nil{
+		fmt.Printf("Error decoding %s: ", err)
+		return nil, err
+	}
+
+	//We will look through the returning data and only take 5 or less 
+	videos := []string{}
+	for i, item := range responseStruct.Items {
+		if i >= 5 {
+        	break
+    }
+    if item.ID.VideoID != "" {
+	videoUrl := "https://www.youtube.com/watch?v=" + item.ID.VideoID
+	videos = append(videos, videoUrl)
+}
+
+}
+
+	return videos, nil
+}
+
 func main(){
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+
 	mux := http.FileServer(http.Dir("static/"))
 	http.HandleFunc("/api", handleData)
 	http.Handle("/", mux)
 
-	err := http.ListenAndServe(":8080", nil)
+	
+
+	err = http.ListenAndServe(":8080", nil)
 	if err !=nil{
 		fmt.Printf("Error starting server %s", err)
 		return 

@@ -6,12 +6,8 @@ form.addEventListener('submit', getFormData);
 function getFormData(event) {
     event.preventDefault();
     const skillData = document.getElementById("skill").value;
-    console.log(skillData)
     const lastPracticedData = document.getElementById("lastpracticed").value;
-    console.log(lastPracticedData)
     const complexity = document.getElementById("complexity").value;
-    console.log(complexity)
-
     const formObject = { skill: skillData, lastpracticed: lastPracticedData, complexity: complexity};
 
     const myJSON = JSON.stringify(formObject)
@@ -24,8 +20,11 @@ function getFormData(event) {
     })
     .then(response => response.json())
     .then(responseStruct => {
+    console.log("Raw Response:", responseStruct);
     console.log(responseStruct.regressorscore);
     console.log(responseStruct.interpretation);
+    console.log(responseStruct.youtubelinks);
+    console.log(Array.isArray(responseStruct.youtubelinks));
     });
 
     

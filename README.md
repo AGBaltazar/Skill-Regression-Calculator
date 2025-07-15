@@ -14,7 +14,6 @@ Track skills over time and predict regression using a half-life decay model. Thi
 ## 🛠️ Tech Stack
 
 - **Go** – REST API backend
-- **PostgreSQL** – Persistent storage
 - **Docker & Docker Compose** – Containerized development
 - **YouTube API** – For video recommendations
 - **HTML/CSS/JS** – Simple frontend interface

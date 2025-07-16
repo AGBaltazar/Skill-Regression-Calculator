@@ -40,3 +40,32 @@ The goal of this project is to help users reflect on their current proficiency w
 
    ↓
 - Updated DOM (Results Displayed)
+
+
+## Contributing
+Want to improve this project? Awesome!
+
+Clone the Repository:
+```bash
+- git clone https://github.com/your-username/skill-regression-predictor.git
+- cd skill-regression-predictor
+```
+
+Make Your Changes:
+- Fix bugs or improve code readability
+
+- Add more recommendation sources (e.g., articles or other APIs)
+
+- Polish or redesign the UI
+
+
+Test Locally:
+Use Docker to run everything and confirm your changes work smoothly.
+
+```bash
+docker build -t skill-regression-calculator .
+docker run -p 8080:8080 --env-file .env skill-regression-calculator
+```
+
+Submit a Pull Request:
+Open a PR with a clear description of your changes and why they’re helpful.

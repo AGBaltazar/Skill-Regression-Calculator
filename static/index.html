@@ -12,11 +12,11 @@
 <body>
   <div id="app">
  
-<nav class="navbar bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
-  </div>
-</nav>
+  <nav class="navbar bg-primary navbar-dark mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Skill Regression Predictor</a>
+    </div>
+  </nav>
 
 <div class="accordion" id="accordionExample">
   <div class="accordion-item">
@@ -44,37 +44,88 @@
       </div>
     </div>
   </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingScore">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseScore" aria-expanded="false" aria-controls="collapseScore">
+        Understanding Your Score
+      </button>
+    </h2>
+    <div id="collapseScore" class="accordion-collapse collapse" aria-labelledby="headingScore" data-bs-parent="#scoreExplanation">
+      <div class="accordion-body">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Score Range</th>
+              <th scope="col">Interpretation</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>8 – 10</strong></td>
+              <td class="text-success"><strong>🟢 Fresh</strong></td>
+              <td>Recently practiced and well retained. You’re ready for advanced concepts.</td>
+            </tr>
+            <tr>
+              <td><strong>4 – 7</strong></td>
+              <td class="text-warning"><strong>🟡 Rusty</strong></td>
+              <td>Some memory loss. A quick review of intermediate topics is recommended.</td>
+            </tr>
+            <tr>
+              <td><strong>1 – 3</strong></td>
+              <td class="text-orange"><strong>🟠 Weak</strong></td>
+              <td>Significant decay. Rebuild your base by revisiting beginner topics.</td>
+            </tr>
+            <tr>
+              <td><strong>0 or less</strong></td>
+              <td class="text-danger"><strong>🔴 Forgotten</strong></td>
+              <td>The skill is likely forgotten. Restart from the basics.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 
-    <!-- Input Form -->
-    <div class="card mb-4">
-      <div class="card-body">
-        <form id="regression-form">
-          <div class="mb-3">
-            <label for="skill" class="form-label">Skill</label>
-            <input type="text" class="form-control" id="skill" required placeholder="e.g. Golang, Docker, SQL">
-          </div>
-          <div class="mb-3">
-            <label for="lastpracticed" class="form-label">Last Practiced Date</label>
-            <input type="date" class="form-control" id="lastpracticed" required>
-          </div>
-          <div class="mb-3">
-            <label for="complexity" class="form-label">Skill Complexity (1 Easy - 10 Difficult)</label>
-            <input type="number" class="form-control" id="complexity" required>
-          </div>
-          <button type="submit" class="btn btn-primary" id="sumbit">Predict</button>
-        </form>
-      </div>
-    </div>
 
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+
+        <!-- Form Card -->
+        <div class="card mb-4 shadow-sm">
+          <div class="card-body">
+            <form id="regression-form">
+              <div class="mb-3">
+                <label for="skill" class="form-label">Skill</label>
+                <input type="text" class="form-control" id="skill" required placeholder="e.g. Golang, Docker, SQL" aria-label="Skill name input">
+              </div>
+              <div class="mb-3">
+                <label for="lastpracticed" class="form-label">Last Practiced Date</label>
+                <input type="date" class="form-control" id="lastpracticed" required>
+              </div>
+              <div class="mb-3">
+                <label for="complexity" class="form-label">Skill Complexity (1 Easy - 10 Difficult)</label>
+                <input type="number" class="form-control" id="complexity" required min="1" max="10" placeholder="1 (Easy) to 10 (Hard)">
+              </div>
+              <button type="submit" class="btn btn-primary w-100" id="submit">Predict</button>
+            </form>
+          </div>
+        </div>
     <!--Once the Response comes back with calculated values then we are building Score card-->
     <div class="card mx-auto p-2" style="width: 18rem;">
     <div class="card" >
     <div class="card-body">
-        <h5 class="card-title">Your Retention Score</h5>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-        
+      <img src="" alt="">
+      <h5 class="card-title">Your Retention Score</h5>
+      <h6 class="card-subtitle mb-2 text-body-secondary" id="retention-score"></h6>
+      <h6 class="card-subtitle mb-2 text-body-secondary" id="interpretation"></h6>
+      <p class="card-text">
+  This score estimates how well you retain the skill based on how long ago you last practiced it and how complex it is.
+</p>
     </div>
     </div>
 
@@ -82,11 +133,13 @@
     <div class="card">
     <div class="card-body">
         <h5 class="card-title">Recomendations</h5>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+        <p>Once submitted, you will find recomendations here based off of your retention score.</p>
+        <div class="card-body" id="video-links"></div>
     </div>
     </div>
   </div>
+
+  
 
   <script src="index.js"></script>
 </body>

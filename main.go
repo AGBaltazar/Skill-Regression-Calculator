@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"net/url"
 
 	"github.com/joho/godotenv"
 )
@@ -55,8 +56,9 @@ func handleData(w http.ResponseWriter, r *http.Request){
 
 		//Now that we have the regressor score, we will be sending it back to our front end along with a interpretation and recommendations
 		if regressorScore >= 7 {
-			YoutubeURL:= "?q=" + skillStruct.Name + "+advanced+concepts&key=" + apiKey
-			youtubeResponse, err := callYoutube(YoutubeURL)
+			query := "?part=snippet&type=video&maxResults=5&q=" + url.QueryEscape(skillStruct.Name+" advanced concepts") + "&key=" + apiKey
+
+			youtubeResponse, err := callYoutube(query)
 			if err != nil{
 				fmt.Printf("Error calling YouTube: %s ", err)
 			}
@@ -71,8 +73,9 @@ func handleData(w http.ResponseWriter, r *http.Request){
 			json.NewEncoder(w).Encode(response)
 
 		} else if regressorScore >= 4 && regressorScore <=6 {
-			YoutubeURL :="?q=" + skillStruct.Name + "+intermediate&key=" + apiKey
-			youtubeResponse, err := callYoutube(YoutubeURL)
+			query := "?part=snippet&type=video&maxResults=5&q=" + url.QueryEscape(skillStruct.Name+" intermediate concepts") + "&key=" + apiKey
+
+			youtubeResponse, err := callYoutube(query)
 			if err != nil{
 				fmt.Printf("Error calling YouTube: %s ", err)
 			}
@@ -87,8 +90,9 @@ func handleData(w http.ResponseWriter, r *http.Request){
 			json.NewEncoder(w).Encode(response)
 
 		} else if regressorScore >= 1 && regressorScore <= 3{
-			YoutubeURL:= "?q=" + skillStruct.Name + "+basics&key=" + apiKey
-			youtubeResponse, err := callYoutube(YoutubeURL)
+			query := "?part=snippet&type=video&maxResults=5&q=" + url.QueryEscape(skillStruct.Name+" basic concepts") + "&key=" + apiKey
+
+			youtubeResponse, err := callYoutube(query)
 			if err != nil{
 				fmt.Printf("Error calling YouTube: %s ", err)
 			}
@@ -104,8 +108,9 @@ func handleData(w http.ResponseWriter, r *http.Request){
 
 		} else{
 
-			YoutubeURL:= "?q=" + skillStruct.Name + "+for+beginners&key=" + apiKey
-			youtubeResponse, err := callYoutube(YoutubeURL)
+			query := "?part=snippet&type=video&maxResults=5&q=" + url.QueryEscape(skillStruct.Name+" beginner tutorial") + "&key=" + apiKey
+
+			youtubeResponse, err := callYoutube(query)
 			if err != nil{
 				fmt.Printf("Error calling YouTube: %s ", err)
 			}
